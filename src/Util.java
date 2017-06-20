@@ -1,6 +1,4 @@
-import java.util.Base64;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 public class Util
 {
@@ -43,6 +41,11 @@ public class Util
     public static String decryptSingleByteXORMostProbable(String input)
     {
         return decryptSingleByteXOR(input).entrySet().iterator().next().getValue();
+    }
+
+    public static void decryptRepeatingKeyXOR(byte[] input)
+    {
+
     }
 
     private static byte[] hexToBytes(String hex)
@@ -155,5 +158,53 @@ public class Util
             chi2 += (diff * diff) / expected;
         }
         return chi2;
+    }
+
+    public static int hammingDistance(String s1, String s2)
+    {
+        assert s1.length() == s2.length();
+
+        byte[] b1 = getByteArray(s1);
+        byte[] b2 = getByteArray(s2);
+
+        return hammingDistance(b1, b2);
+    }
+
+    public static int hammingDistance(byte[] b1, byte[] b2)
+    {
+        assert b1.length == b2.length;
+
+        int dist = 0;
+
+        for(int i=0; i<b1.length; i++)
+        {
+            dist += getSetBitCount( b1[i] ^ b2[i] );
+        }
+        return dist;
+    }
+
+    private static int getSetBitCount(int a)
+    {
+        int count = 0;
+        while( a != 0)
+        {
+            a &= (a-1);
+            count++;
+        }
+        return count;
+    }
+
+    private static int getProbableKeySizeForRepeatableXOR(byte[] input)
+    {
+        TreeSet<Float> distances = new TreeSet<>(Collections.reverseOrder());
+
+        for(int i=2; i<40; i++)
+        {
+            for(int j=0; j<4; j++)
+            {
+
+            }
+        }
+        return 0;
     }
 }

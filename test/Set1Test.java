@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Base64;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -56,5 +57,28 @@ public class Set1Test
                 "a282b2f20430a652e2c652a3124333a653e2b2027630c692b20283165286326302e27282f",
                 Util.repeatingKeyXOR("Burning 'em, if you ain't quick and nimble\n" +
                 "I go crazy when I hear a cymbal", "ICE"));
+    }
+
+    @Test
+    void testHammingDistance()
+    {
+        Assertions.assertEquals(37, Util.hammingDistance("this is a test", "wokka wokka!!!"));
+    }
+
+    @Test
+    void c6() throws IOException
+    {
+        BufferedReader br = new BufferedReader( new FileReader("input\\s1c6.txt"));
+        String line;
+        StringBuilder sb = new StringBuilder();
+
+        while((line = br.readLine()) != null)
+        {
+            sb.append(line);
+        }
+        br.close();
+        byte[] input = Base64.getDecoder().decode(sb.toString());
+
+
     }
 }
