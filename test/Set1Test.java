@@ -1,3 +1,4 @@
+import objects.Candidate;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -7,6 +8,7 @@ import java.io.IOException;
 import java.util.Base64;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 public class Set1Test
 {
@@ -20,15 +22,18 @@ public class Set1Test
     @Test
     void c2()
     {
+        byte[] bytes1 = Util.toBytes("1c0111001f010100061a024b53535009181c");
+        byte[] bytes2 = Util.toBytes("686974207468652062756c6c277320657965");
+
         Assertions.assertEquals("746865206b696420646f6e277420706c6179",
-                Util.fixedXOR("1c0111001f010100061a024b53535009181c", "686974207468652062756c6c277320657965"));
+                Util.toHex( Util.doRepeatingKeyXOR(bytes1, bytes2 )));
     }
 
     @Test
     void c3()
     {
         Assertions.assertEquals("Cooking MC's like a pound of bacon",
-                Util.decryptSingleByteXORMostProbable("1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736"));
+                Decryptor.decryptSingleByteXORMostProbable("1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736"));
     }
 
     @Test
@@ -37,32 +42,27 @@ public class Set1Test
         BufferedReader br = new BufferedReader(new FileReader("input\\s1c4.txt"));
         String line;
 
-        TreeMap<Float, String> finalCandidates = new TreeMap<>();
+        TreeSet<Candidate> finalCandidates = new TreeSet<>();
 
         while((line = br.readLine()) != null)
         {
-            Map<Float, String> candidates = Util.decryptSingleByteXOR(line);
-            Map.Entry<Float, String> entry = candidates.entrySet().iterator().next();
-            finalCandidates.put(entry.getKey(), entry.getValue());
+            finalCandidates.add( Decryptor.decryptSingleByteXOR(line).first() );
         }
         br.close();
         Assertions.assertEquals("Now that the party is jumping",
-                finalCandidates.entrySet().iterator().next().getValue().trim());
+                finalCandidates.first().getResultAsString());
     }
 
     @Test
     void c5()
     {
-        Assertions.assertEquals("0b3637272a2b2e63622c2e69692a23693a2a3c6324202d623d63343c2a26226324272765272" +
-                "a282b2f20430a652e2c652a3124333a653e2b2027630c692b20283165286326302e27282f",
-                Util.repeatingKeyXOR("Burning 'em, if you ain't quick and nimble\n" +
-                "I go crazy when I hear a cymbal", "ICE"));
-    }
+        byte[] input = Util.getByteArray("Burning 'em, if you ain't quick and nimble\n" +
+                "I go crazy when I hear a cymbal");
+        byte[] key = Util.getByteArray("ICE");
 
-    @Test
-    void testHammingDistance()
-    {
-        Assertions.assertEquals(37, Util.hammingDistance("this is a test", "wokka wokka!!!"));
+        Assertions.assertEquals("0b3637272a2b2e63622c2e69692a23693a2a3c6324202d623d63343c2a26226324272765272" +
+                        "a282b2f20430a652e2c652a3124333a653e2b2027630c692b20283165286326302e27282f",
+                Util.toHex( Util.doRepeatingKeyXOR(input, key)) );
     }
 
     @Test
@@ -79,6 +79,7 @@ public class Set1Test
         br.close();
         byte[] input = Base64.getDecoder().decode(sb.toString());
 
-
+        Assertions.assertEquals("Terminator X: Bring the noise",
+                Decryptor.getProbableKeyForRepeatableXOR(input, 2, 40, 40, 10));
     }
 }
