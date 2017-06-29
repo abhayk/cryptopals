@@ -61,4 +61,10 @@ public class Set1Test
         Assertions.assertEquals(true,
                 Set1.challenge7("test\\input\\s1c7.txt", "YELLOW SUBMARINE").startsWith("I'm back and I'm ringin' the bell"));
     }
+
+    @Test
+    void challenge8() throws IOException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, NoSuchPaddingException {
+        Assertions.assertEquals( true,
+                Set1.challenge8("test\\input\\s1c8.txt").startsWith("d8806197"));
+    }
 }

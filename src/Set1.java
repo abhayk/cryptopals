@@ -1,4 +1,5 @@
 import objects.Candidate;
+import objects.MutableInt;
 import util.ConversionUtil;
 import util.CryptoUtil;
 import util.FileUtil;
@@ -11,7 +12,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.util.TreeSet;
+import java.util.*;
 
 public class Set1
 {
@@ -77,5 +78,41 @@ public class Set1
         byte[] input = FileUtil.getBytesFromBase64File(inputFilePath);
 
         return CryptoUtil.decryptAESInECBMode(input, key);
+    }
+
+    //Detect AES in ECB mode
+    public static String challenge8(String inputFilePath) throws IOException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException {
+        BufferedReader br = new BufferedReader(new FileReader(inputFilePath));
+
+        String line;
+        List<String> input = new ArrayList<>();
+
+        while((line = br.readLine()) != null )
+        {
+            input.add(line);
+        }
+        br.close();
+
+        TreeMap<Integer, List<String>> results = new TreeMap<>();
+        for(String s : input)
+        {
+            Map<String, MutableInt> blockCount = new HashMap<>();
+
+            int max = 0;
+
+            for(int i=0; i<s.length(); i += 32)
+            {
+                String subStr = s.substring(i, i+32);
+
+                int curVal = blockCount.computeIfAbsent( subStr, k -> new MutableInt()).incrementAndGet();
+
+                if( curVal > max )
+                {
+                    max = curVal;
+                }
+            }
+            results.computeIfAbsent( max, k -> new ArrayList<>()).add(s);
+        }
+        return results.lastEntry().getValue().get(0);
     }
 }
