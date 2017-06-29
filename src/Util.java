@@ -1,6 +1,7 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Base64;
-import java.util.Locale;
-import java.util.TreeSet;
 
 public class Util
 {
@@ -100,16 +101,9 @@ public class Util
             else if( b == 9 || b == 10 || b == 13 )
                 ignored++;
             else
-            {
-                //exitChars.add(b);
-                //System.out.println("Exit char - " + b);
                 return 10000f;
-            }
         }
 
-        //System.out.println("Reached out of exit");
-
-        //System.out.println("Exit chars - " + exitChars.toString());
         float chi2 = 0f;
         int valid_len = input.length - ignored;
         if( ((float)valid_len / input.length) < 0.6f)
@@ -160,4 +154,19 @@ public class Util
         }
         return count;
     }
+
+    public static byte[] getBytesFromBase64File(String filePath) throws IOException
+    {
+        BufferedReader br = new BufferedReader( new FileReader(filePath));
+        String line;
+        StringBuilder sb = new StringBuilder();
+
+        while((line = br.readLine()) != null)
+        {
+            sb.append( line );
+        }
+        br.close();
+        return Base64.getDecoder().decode( sb.toString() );
+    }
+
 }

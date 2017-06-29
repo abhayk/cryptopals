@@ -1,5 +1,12 @@
 import objects.Candidate;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.spec.SecretKeySpec;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 public class Decryptor
@@ -90,5 +97,19 @@ public class Decryptor
     public static String decryptSingleByteXORMostProbable(String input)
     {
         return decryptSingleByteXOR(input).first().getResultAsString();
+    }
+
+    public static String decryptAESInECBMode(byte[] input, String key) throws NoSuchPaddingException,
+            NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException
+    {
+        SecretKeySpec spec = new SecretKeySpec(key.getBytes(), "AES");
+
+        Cipher cipher = Cipher.getInstance("AES/ECB/NoPadding");
+
+        cipher.init(Cipher.DECRYPT_MODE, spec);
+
+        byte[] result = cipher.doFinal(input);
+
+        return new String(result).trim();
     }
 }

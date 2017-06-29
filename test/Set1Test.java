@@ -2,12 +2,17 @@ import objects.Candidate;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Base64;
-import java.util.Map;
-import java.util.TreeMap;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.TreeSet;
 
 public class Set1Test
@@ -68,18 +73,31 @@ public class Set1Test
     @Test
     void c6() throws IOException
     {
-        BufferedReader br = new BufferedReader( new FileReader("input\\s1c6.txt"));
-        String line;
-        StringBuilder sb = new StringBuilder();
-
-        while((line = br.readLine()) != null)
-        {
-            sb.append(line);
-        }
-        br.close();
-        byte[] input = Base64.getDecoder().decode(sb.toString());
+        byte[] input = Util.getBytesFromBase64File("input\\s1c6.txt");
 
         Assertions.assertEquals("Terminator X: Bring the noise",
                 Decryptor.getProbableKeyForRepeatableXOR(input, 2, 40, 40, 10));
+    }
+
+    @Test
+    void c7() throws IOException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException
+    {
+        byte[] input = Util.getBytesFromBase64File("input\\s1c7.txt");
+
+        Assertions.assertEquals(true, Decryptor.decryptAESInECBMode(input, "YELLOW SUBMARINE").startsWith("I'm back and I'm ringin' the bell"));
+    }
+
+    @Test
+    void c8() throws IOException
+    {
+        BufferedReader br = new BufferedReader( new FileReader( "input\\s1c8.txt") );
+        String line;
+        List<String> input = new ArrayList<>();
+
+        while((line = br.readLine()) != null)
+        {
+            input.add(line);
+        }
+        br.close();
     }
 }
