@@ -141,20 +141,6 @@ public class CryptoUtil
         return decryptSingleByteXOR(input).first().getResultAsString();
     }
 
-    public static String decryptAESInECBMode(byte[] input, String key) throws NoSuchPaddingException,
-            NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException
-    {
-        SecretKeySpec spec = new SecretKeySpec(key.getBytes(), "AES");
-
-        Cipher cipher = Cipher.getInstance("AES/ECB/NoPadding");
-
-        cipher.init(Cipher.DECRYPT_MODE, spec);
-
-        byte[] result = cipher.doFinal(input);
-
-        return new String(result).trim();
-    }
-
     public static String getProbableKeyForRepeatingKeyXOR(byte[] input, int keySizeFrom, int keySizeTo, int blockCount, int probableKeyTryCount)
     {
         Map<Float, List<Integer>> normalizedDistances = new TreeMap<>();

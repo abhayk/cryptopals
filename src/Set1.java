@@ -1,5 +1,6 @@
 import objects.Candidate;
 import objects.MutableInt;
+import util.AESUtil;
 import util.ConversionUtil;
 import util.CryptoUtil;
 import util.FileUtil;
@@ -77,7 +78,7 @@ public class Set1
     {
         byte[] input = FileUtil.getBytesFromBase64File(inputFilePath);
 
-        return CryptoUtil.decryptAESInECBMode(input, key);
+        return AESUtil.decryptAESInECBMode(input, key);
     }
 
     //Detect AES in ECB mode

@@ -1,16 +1,24 @@
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
+
 public class Set2Test
 {
     @Test
-    void challenge1()
+    void challenge9()
     {
         String input = "YELLOW SUBMARINE";
 
         byte padByte = (byte)4;
 
-        String result = Set2.challenge1(input, 20, padByte);
+        String result = Set2.challenge9(input, 20, padByte);
 
         Assertions.assertEquals(20, result.length());
 
@@ -18,5 +26,15 @@ public class Set2Test
         {
             Assertions.assertEquals(padByte, result.charAt(i));
         }
+    }
+
+    @Test
+    void challenge10() throws BadPaddingException, NoSuchAlgorithmException, IOException, IllegalBlockSizeException, NoSuchPaddingException, InvalidKeyException
+    {
+        byte[] iv = new byte[16];
+        Arrays.fill( iv, (byte)0);
+
+        Assertions.assertEquals( true,
+                Set2.challenge10("test\\input\\s2c2.txt", "YELLOW SUBMARINE", iv).startsWith("I'm back and I'm ringin' the bell"));
     }
 }
