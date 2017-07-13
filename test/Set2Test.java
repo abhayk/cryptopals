@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Set2Test
 {
@@ -36,5 +37,20 @@ public class Set2Test
 
         Assertions.assertEquals( true,
                 Set2.challenge10("test\\input\\s2c2.txt", "YELLOW SUBMARINE", iv).startsWith("I'm back and I'm ringin' the bell"));
+    }
+
+    @Test
+    void challenge11() throws IllegalBlockSizeException, NoSuchPaddingException, BadPaddingException, NoSuchAlgorithmException, InvalidKeyException
+    {
+        String input = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+
+        for( int i=0; i<10; i++)
+        {
+            int mode = ThreadLocalRandom.current().nextInt(2);
+
+            byte[] cipherBytes = Set2.encryptionOracle( input.getBytes(), mode);
+
+            Assertions.assertEquals( mode, Set2.challenge11( cipherBytes ));
+        }
     }
 }

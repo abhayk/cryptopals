@@ -41,16 +41,4 @@ public class ConversionUtil
             s = "0" + s;
         return s;
     }
-
-    public static byte[] stringToByteArray(String s)
-    {
-        byte[] bytes = new byte[s.length()];
-
-        int i=0;
-        for(char c : s.toCharArray())
-        {
-            bytes[i++] = (byte)c;
-        }
-        return bytes;
-    }
 }

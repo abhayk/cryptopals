@@ -1,14 +1,8 @@
 package util;
 
 import objects.Candidate;
+import objects.MutableInt;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.spec.SecretKeySpec;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 public class CryptoUtil
@@ -83,8 +77,8 @@ public class CryptoUtil
     {
         assert s1.length() == s2.length();
 
-        byte[] b1 = ConversionUtil.stringToByteArray(s1);
-        byte[] b2 = ConversionUtil.stringToByteArray(s2);
+        byte[] b1 = s1.getBytes();
+        byte[] b2 = s2.getBytes();
 
         return hammingDistance(b1, b2);
     }
@@ -199,5 +193,45 @@ public class CryptoUtil
             probableKeysSorted.put(keyScore, probableKey);
         }
         return probableKeysSorted.firstEntry().getValue();
+    }
+
+    public static byte[] getRandomBytes(int size)
+    {
+        byte[] bytes = new byte[size];
+        new Random().nextBytes( bytes );
+        return bytes;
+    }
+
+    public static byte[] pad(byte[] inputBytes, int blockSize, byte padByte)
+    {
+        int resultSize = inputBytes.length < blockSize ? blockSize : ((inputBytes.length / blockSize) + 1) * blockSize;
+
+        byte[] results = new byte[ resultSize ];
+
+        System.arraycopy( inputBytes, 0, results, 0, inputBytes.length);
+
+        Arrays.fill(results, inputBytes.length, results.length, padByte);
+
+        return results;
+    }
+
+    public Map<String, MutableInt> getBlockCount(byte[] input, int blockSize)
+    {
+        Map<String, MutableInt> blockCount = new HashMap<>();
+
+        int max = 0;
+
+        for(int i=0; i<input.length; i += blockSize)
+        {
+            byte[] block = Arrays.copyOfRange(input, i, i+blockSize);
+
+            int curVal = blockCount.computeIfAbsent( ConversionUtil.bytesToHex(block), k -> new MutableInt()).incrementAndGet();
+
+            if( curVal > max )
+            {
+                max = curVal;
+            }
+        }
+        return blockCount;
     }
 }

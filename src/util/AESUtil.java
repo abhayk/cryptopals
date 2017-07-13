@@ -8,24 +8,25 @@ import javax.crypto.spec.SecretKeySpec;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+import java.util.Random;
 
 public class AESUtil
 {
 
-    public static String decryptAESInECBMode(byte[] input, String key) throws NoSuchPaddingException,
+    public static String decryptAESInECBMode(byte[] input, byte[] key) throws NoSuchPaddingException,
             NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException
     {
         byte[] result = doAESInECBMode(input, key, Cipher.DECRYPT_MODE);
         return new String(result).trim();
     }
 
-    public static byte[] encryptAESInECBMode(byte[] input, String key) throws NoSuchPaddingException,
+    public static byte[] encryptAESInECBMode(byte[] input, byte[] key) throws NoSuchPaddingException,
             NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException
     {
         return doAESInECBMode(input, key, Cipher.ENCRYPT_MODE);
     }
 
-    public static byte[] doAESInECBMode(byte[] input, String key, int cipherMode) throws NoSuchPaddingException,
+    public static byte[] doAESInECBMode(byte[] input, byte[] key, int cipherMode) throws NoSuchPaddingException,
             NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException
     {
         Cipher cipher = getAESCipherInstance(key, "AES/ECB/NoPadding", cipherMode);
@@ -33,10 +34,10 @@ public class AESUtil
         return cipher.doFinal(input);
     }
 
-    public static Cipher getAESCipherInstance(String key, String transformation, int cipherMode) throws
+    public static Cipher getAESCipherInstance(byte[] key, String transformation, int cipherMode) throws
             NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException
     {
-        SecretKeySpec spec = new SecretKeySpec(key.getBytes(), "AES");
+        SecretKeySpec spec = new SecretKeySpec(key, "AES");
 
         Cipher cipher = Cipher.getInstance(transformation);
 
@@ -45,10 +46,9 @@ public class AESUtil
         return cipher;
     }
 
-    public static byte[] encryptAESInCBCModeManual(byte[] input, String key, byte[] iv) throws
+    public static byte[] encryptAESInCBCModeManual(byte[] input, byte[] keyBytes, byte[] iv) throws
             IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException
     {
-        byte[] keyBytes = key.getBytes();
         int blockSize = keyBytes.length;
         byte[] block;
         byte[] xorBytes;
@@ -62,16 +62,16 @@ public class AESUtil
 
             xorBytes = CryptoUtil.doRepeatingKeyXOR( block, cipherBytes );
 
-            cipherBytes = encryptAESInECBMode( xorBytes, key );
+            cipherBytes = encryptAESInECBMode( xorBytes, keyBytes );
 
             System.arraycopy(cipherBytes, 0, resultBytes, i, cipherBytes.length);
         }
         return resultBytes;
     }
 
-    public static String decryptAESInCBCModeManual(byte[] input, String key, byte[] iv) throws
-            IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException {
-        byte[] keyBytes = key.getBytes();
+    public static String decryptAESInCBCModeManual(byte[] input, byte[] keyBytes, byte[] iv) throws
+            IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException
+    {
         int blockSize = keyBytes.length;
         byte[] block;
         byte[] plainBytes;
@@ -83,7 +83,7 @@ public class AESUtil
         {
             block = Arrays.copyOfRange(input, i, i + blockSize);
 
-            decryptedBytes = doAESInECBMode( block, key, Cipher.DECRYPT_MODE );
+            decryptedBytes = doAESInECBMode( block, keyBytes, Cipher.DECRYPT_MODE );
 
             plainBytes = CryptoUtil.doRepeatingKeyXOR(decryptedBytes, cipherBytes);
 
@@ -93,4 +93,5 @@ public class AESUtil
         }
         return new String(resultBytes).trim();
     }
+
 }

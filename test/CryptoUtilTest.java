@@ -25,8 +25,8 @@ public class CryptoUtilTest
         byte[] iv = new byte[16];
         Arrays.fill( iv, (byte)0);
 
-        byte[] result = AESUtil.encryptAESInCBCModeManual( input.getBytes(), key, iv);
+        byte[] result = AESUtil.encryptAESInCBCModeManual( input.getBytes(), key.getBytes(), iv);
 
-        Assertions.assertEquals(input, AESUtil.decryptAESInCBCModeManual(result, key, iv));
+        Assertions.assertEquals(input, AESUtil.decryptAESInCBCModeManual(result, key.getBytes(), iv));
     }
 }

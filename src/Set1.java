@@ -58,8 +58,8 @@ public class Set1
     // Implement repeating-key XOR
     public static String challenge5(String input, String key)
     {
-        byte[] inputBytes = ConversionUtil.stringToByteArray(input);
-        byte[] keyBytes = ConversionUtil.stringToByteArray(key);
+        byte[] inputBytes = input.getBytes();
+        byte[] keyBytes = key.getBytes();
 
         return ConversionUtil.bytesToHex( CryptoUtil.doRepeatingKeyXOR(inputBytes, keyBytes));
     }
@@ -78,11 +78,12 @@ public class Set1
     {
         byte[] input = FileUtil.getBytesFromBase64File(inputFilePath);
 
-        return AESUtil.decryptAESInECBMode(input, key);
+        return AESUtil.decryptAESInECBMode(input, key.getBytes());
     }
 
     //Detect AES in ECB mode
-    public static String challenge8(String inputFilePath) throws IOException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException {
+    public static String challenge8(String inputFilePath) throws IOException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException
+    {
         BufferedReader br = new BufferedReader(new FileReader(inputFilePath));
 
         String line;
